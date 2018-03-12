@@ -72,9 +72,9 @@ contract CrowdSale is Pausable, WhiteListable {
     minCap = _minCap;
     withdrawWallet = _withdrawWallet;
 
-    /* token.transferFromICO(_founders, RESERVED_TOKENS_FOUNDERS); */
-    /* token.transferFromICO(_operational, RESERVED_TOKENS_OPERATIONAL_EXPENSES);
-    token.transferOwnership(msg.sender); */
+    // token.transferFromICO(_founders, RESERVED_TOKENS_FOUNDERS);
+    // token.transferFromICO(_operational, RESERVED_TOKENS_OPERATIONAL_EXPENSES);
+    // token.transferOwnership(msg.sender);
   }
 
   modifier whenICOSaleHasEnded() {
@@ -104,11 +104,14 @@ contract CrowdSale is Pausable, WhiteListable {
     withdrawWallet = _withdrawWallet;
   }
 
-  function setPreICOPeriod(uint256 _startPreICO uint256 _endPreICO) onlyOwner public {
+  function setStartPreICO(uint256 _startPreICO) onlyOwner public {
     require(_startPreICO > now);
+    startPreICO = _startPreICO;
+  }
+
+  function setEndPreICO(uint256 _endPreICO) onlyOwner public {
     require(_endPreICO > now && _endPreICO > startPreICO);
     endPreICO = _endPreICO;
-    startPreICO = _startPreICO;
   }
 
   function setStartICO(uint256 _startICO) onlyOwner public {
@@ -204,9 +207,9 @@ contract CrowdSale is Pausable, WhiteListable {
   }
 
   function addInvestmentPreICO(address _from, uint256 _value) internal {
-    if(investorsPreICO[_from] == 0){
-      investorsPreICO.push(_from);
-    }
+    // if(investorsPreICO[_from] == 0){
+    //   investorsPreICO.push(_from);
+    // }
     investorsPreICO[_from] = investorsPreICO[_from].add(_value);
   }
 
@@ -239,6 +242,7 @@ contract CrowdSale is Pausable, WhiteListable {
 
 
 }
+
 
 
 

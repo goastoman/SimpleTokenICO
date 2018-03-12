@@ -14,7 +14,7 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
   string constant public name = "SimpleToken";
   string constant public symbol = "ST";
   uint256 constant public decimals = 18;
-  address private addressICO;
+  address public addressICO;
   uint256 constant public INITIAL_TOTAL_SUPPLY = 10e6 * (10 ** decimals);
 
   modifier onlyICO() {
