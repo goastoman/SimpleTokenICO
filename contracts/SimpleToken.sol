@@ -31,27 +31,24 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
     pause();
   }
 
-  function transfer(address _to, uint256 _value) public whenNotPaused returns (bool) {
+  function transfer(address _to, uint256 _value) public whenNotPaused returns(bool) {
     require(_to != address(0x0));
     require(_value <= balances[msg.sender]);
-
     return super.transfer(_to, _value);
   }
 
-  function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool) {
+  function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns(bool) {
     require(_from != address(0x0));
     require(_to != address(0x0));
-
     return super.transferFrom(_from, _to, _value);
   }
 
-  function transferFromICO(address _to, uint256 _amount) public onlyICO {
+  function transferFromICO(address _to, uint256 _value) public onlyICO returns(bool) {
     require(_to != address(0x0));
-
-    super.transfer(_to, _amount);
+    return super.transfer(_to, _value);
   }
 
-  function burnFromICO() onlyICO public {
+  function burnFromICO() public onlyICO {
     uint256 remindingTokens = balanceOf(addressICO);
     balances[addressICO] = balances[addressICO].sub(remindingTokens);
     totalSupply_ = totalSupply_.sub(remindingTokens);
@@ -60,6 +57,7 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
 
   function burnFrom(address _from, uint256 _value) public {
     require(_value <= balances[msg.sender]);
+    require(_from != address(0x0));
     require(msg.sender == addressICO || msg.sender == owner);
     // no need to require value <= totalSupply, since that would imply the
     // sender's balance is greater than the totalSupply, which *should* be an assertion failure
@@ -67,7 +65,15 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
     balances[_from] = balances[_from].sub(_value);
     totalSupply_ = totalSupply_.sub(_value);
     Burn(_from, _value);
-    Transfer(_from, address(0), _value);
+    Transfer(_from, address(0), _value); 
   }
 
 }
+
+
+
+
+
+
+
+//

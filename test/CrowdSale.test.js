@@ -1,24 +1,18 @@
 const assert = require('assert');
-const ganache = require('ganache-cli');
-const Web3 = require('web3');
-const web3 = new Web3(ganache.provider());
-
+import { BigNumber } from 'bignumber.js';
 import { assertEqual, assertTrue, timeController } from './utils';
 
 const CrowdSale = artifacts.require('CrowdSale');
+const SimpleToken = artifacts.require('SimpleToken');
 let accounts; //our local variables
 
 contract('testing on the air', (wallets) => {
   const addressICO = wallets[9];
   const addressClient = wallets[1];
-  // const startPreICO = timeController.currentTimestamp().add(3600);
-  // const endPreICO = timeController.currentTimestamp().add(7200);
-  // const startICO = timeController.currentTimestamp().add(10800);
-  // const endICO = timeController.currentTimestamp().add(14400);
-  const startPreICO = 1520690409;
-  const endPreICO = 1520694009;
-  const startICO = 1520697609;
-  const endICO = 1520701209;
+  const startPreICO = timeController.currentTimestamp().add(3600);
+  const endPreICO = timeController.currentTimestamp().add(7200);
+  const startICO = timeController.currentTimestamp().add(10800);
+  const endICO = timeController.currentTimestamp().add(14400);
 
   const PreICORate = 20;  //1 Ether = 20 tokens
   const ICORate = 1;  //1 Ether = 1 token

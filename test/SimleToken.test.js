@@ -1,8 +1,5 @@
 const assert = require('assert');
-const ganache = require('ganache-cli');
-const Web3 = require('web3');
-const web3 = new Web3(ganache.provider());
-
+import { BigNumber } from 'bignumber.js';
 import { assertEqual, assertTrue, timeController } from './utils';
 
 const SimpleToken = artifacts.require('SimpleToken');
@@ -61,15 +58,6 @@ contract('SimpleToken', (wallets) => {
       assertEqual(balance.toNumber(), amount);
     });
 
-    it('should transfer from ICO', async function() {
-      const amount = 1e6 * (10 ** 18);
-      await this.token.transferFromICO(addressClient, amount, {
-        from: addressICO
-      });
-      const balance = await this.token.balanceOf(addressClient);
-      assertEqual(balance.toNumber(), amount);
-    });
-
     it('should transfer from', async function() {
       await this.token.unpause();
       const addressAllowed = wallets[2];
@@ -84,14 +72,13 @@ contract('SimpleToken', (wallets) => {
       assertEqual(balance.toNumber(), amount);
     });
 
-    it('should burn tokens from', async function() {
+    it('should transfer from ICO', async function() {
       const amount = 1e6 * (10 ** 18);
-      const balance = await this.token.balanceOf(addressICO);
-      const balanceDecreased = balance.sub(amount).toNumber();
-      await this.token.burnFrom(addressICO, amount, {
+      await this.token.transferFromICO(addressClient, amount, {
         from: addressICO
       });
-      assertEqual(balance.sub(amount).toNumber(), balanceDecreased);
+      const balance = await this.token.balanceOf(addressClient);
+      assertEqual(balance.toNumber(), amount);
     });
 
     it('should burn tokens from ICO', async function() {
@@ -104,7 +91,15 @@ contract('SimpleToken', (wallets) => {
       assertEqual(balance.toNumber(), 0);
     });
 
-
+    it('should burn tokens from', async function() {
+      const amount = 1e6 * (10 ** 18);
+      const balance = await this.token.balanceOf(addressICO);
+      const balanceDecreased = balance.sub(amount).toNumber();
+      await this.token.burnFrom(addressICO, amount, {
+        from: addressICO
+      });
+      assertEqual(balance.sub(amount).toNumber(), balanceDecreased);
+    });
 
   });
 });
