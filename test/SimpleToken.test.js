@@ -8,7 +8,7 @@ let accounts; //our local variables
 contract('SimpleToken', (wallets) => {
   const addressICO = wallets[9];
   const addressClient = wallets[1];
-  describe('testing on the air', () => {
+  describe('testing on the air...', () => {
 
     beforeEach(async function () {
           this.token = await SimpleToken.new(addressICO);
@@ -18,31 +18,31 @@ contract('SimpleToken', (wallets) => {
     //   assert.ok(SimpleToken.options.address);
     // });
 
-    it('should be current name', async function() {
+    it('should have right name: SimpleToken', async function() {
       const expectedName = 'SimpleToken';
       const tokenName = await this.token.name();
       assertEqual(expectedName, tokenName);
     });
 
-    it('should be current symbol', async function() {
+    it('should have right symbol: ST', async function() {
       const expectedSymbol = 'ST';
       const tokenSymbol = await this.token.symbol();
       assertEqual(expectedSymbol, tokenSymbol);
     });
 
-    it('should be current decimals', async function() {
+    it('should have right decimals: 18', async function() {
       const expectedDec = 18;
       const tokenDec = await this.token.decimals();
       assertEqual(expectedDec, tokenDec.toNumber());
     });
 
-    it('should be current supply', async function() {
+    it('should have 100.000.000 tokens', async function() {
       const expectedSupply = 10e6 * (10 ** 18);
       const tokenSupply = await this.token.INITIAL_TOTAL_SUPPLY();
       assertEqual(expectedSupply, tokenSupply.toNumber());
     });
 
-    it('should have a balance', async function() {
+    it('should have some balance', async function() {
       const balance = await this.token.balanceOf(addressICO);
       assertEqual(balance.toNumber(), 10e6 * (10 ** 18))
 
@@ -91,7 +91,7 @@ contract('SimpleToken', (wallets) => {
       assertEqual(balance.toNumber(), 0);
     });
 
-    it('should burn tokens from', async function() {
+    it('should burn tokens from wallet', async function() {
       const amount = 1e6 * (10 ** 18);
       const balance = await this.token.balanceOf(addressICO);
       const balanceDecreased = balance.sub(amount).toNumber();

@@ -6,7 +6,7 @@ const CrowdSale = artifacts.require('CrowdSale');
 const SimpleToken = artifacts.require('SimpleToken');
 let accounts; //our local variables
 
-contract('testing on the air', (wallets) => {
+contract('CrowdSale test', (wallets) => {
   const addressICO = wallets[9];
   const addressClient = wallets[1];
   const startPreICO = timeController.currentTimestamp().add(3600);
@@ -22,7 +22,7 @@ contract('testing on the air', (wallets) => {
   const withdrawWallet = wallets[8];
   const ownerICO = wallets[0];
 
-  describe('CrowdSale test', () => {
+  describe('testing on the air...', () => {
 
 
     beforeEach(async function () {
@@ -30,45 +30,55 @@ contract('testing on the air', (wallets) => {
           this.token = SimpleToken.at(await this.sale.token());
         });
 
-    it('should have 18 dec', async function() {
-      const ownerCrowdsale = await this.sale.owner();
-      assertEqual(ownerCrowdsale, ownerICO);
+    it('ownerCrowdsale should be equal ownerICO', async function() {
+      const ownerCrowdSale = await this.sale.owner();
+      assertEqual(ownerCrowdSale, ownerICO);
+    })
 
+    it('ownerToken should be equal ownerICO', async function() {
       const ownerToken = await this.token.owner();
       assertEqual(ownerToken, ownerICO);
-      // const addressICO = await this.token.address;
-      // assertEqual(addressICO, this.sale.address);
-      // const expectedValue = 18;
-      // const tokenValue = await this.sale.decimals();
-      // assertEqual(expectedValue, tokenValue.toNumber());
+    })
+
+    it('should have right decimals: 18', async function() {
+      const expectedValue = 18;
+      const saleValue = await this.sale.decimals();
+      assertEqual(expectedValue, saleValue.toNumber());
+    })
+
+    it('should have 33.000.000 tokens for founders', async function() {
+      const expectedSupply = 33e5 * (10 ** 18);
+      const saleSupply = await this.sale.RESERVED_TOKENS_FOUNDERS();
+      assertEqual(expectedSupply, saleSupply.toNumber());
     });
 
+    it('should have 200.000 tokens for operational expenses', async function() {
+      const expectedSupply = 2e5 * (10 ** 18);
+      const saleSupply = await this.sale.RESERVED_TOKENS_OPERATIONAL_EXPENSES();
+      assertEqual(expectedSupply, saleSupply.toNumber());
+    });
 
+    it('should have 2.000.000 tokens as hardcap for preICO', async function() {
+      const expectedSupply = 2e6 * (10 ** 18);
+      const saleSupply = await this.sale.HARDCAP_TOKENS_PRE_ICO();
+      assertEqual(expectedSupply, saleSupply.toNumber());
+    });
 
-    //
-    // it('should have 33e5 * (10 ** DECIMALS) in RESERVED_TOKENS_FOUNDERS', async function() {
-    //   const balance = 33e5 * (10 ** 18);
-    //   const tokenValue = await this.token.RESERVED_TOKENS_FOUNDERS();
-    //   const getBalanceFounders = await this.token.balanceOf(RESERVED_TOKENS_FOUNDERS);
-    //   assertEqual(getBalanceFounders.toNumber(), balance);
-    // });
-    //
-    // it('should have 2e5 * (10 ** DECIMALS) in RESERVED_TOKENS_OPERATIONAL_EXPENSES', async function() {
-    //   const balance = 2e5 * (10 ** 18);
-    //   const tokenValue = await this.token.RESERVED_TOKENS_OPERATIONAL_EXPENSES();
-    //   const getBalanceOperational = await this.token.balanceOf(RESERVED_TOKENS_OPERATIONAL_EXPENSES);
-    //   assertEqual(getBalanceOperational.toNumber(), balance);
-    // });
+    it('should have 6.000.000 tokens as hardcap for ICO', async function() {
+      const expectedSupply = 6e6 * (10 ** 18);
+      const saleSupply = await this.sale.HARDCAP_TOKENS_ICO();
+      assertEqual(expectedSupply, saleSupply.toNumber());
+    });
 
-    // it('should manual transfer', async function() {
-    //   await this.token.unpause();
-    //   const amount = 1e6 * (10 ** 18);
-    //   const balance = await this.token.balanceOf(addressClient);
-    //   await this.token.manualTransferToken(addressClient, amount, {
-    //     from: ownerICO
-    //   })
-    //   assertEqual(balance.toNumber(), amount);
-    // })
+    it('should manual transfer', async function() {
+      await this.sale.unpause();
+      const amount = 1e6 * (10 ** 18);
+      const balance = await this.sale.balanceOf(addressClient);
+      await this.sale.manualTransferToken(addressClient, amount, {
+        from: ownerICO
+      })
+      assertEqual(balance.toNumber(), amount);
+    })
 
 
 
