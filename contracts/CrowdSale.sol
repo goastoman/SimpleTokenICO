@@ -14,10 +14,10 @@ contract CrowdSale is Pausable, WhiteListable {
   using SafeMath for uint256;
 
   uint256 constant public decimals = 18;
-  uint256 constant public RESERVED_TOKENS_FOUNDERS = 33e5 * (10 ** decimals);
-  uint256 constant public RESERVED_TOKENS_OPERATIONAL_EXPENSES = 2e5 * (10 ** decimals);
-  uint256 constant public HARDCAP_TOKENS_PRE_ICO = 2e6 * (10 ** decimals);  //5e27
-  uint256 constant public HARDCAP_TOKENS_ICO = 6e6 * (10 ** decimals); //1e8 * (10 ** DECIMALS)
+  uint256 constant public RESERVED_TOKENS_FOUNDERS = 23e6 * (10 ** decimals);
+  uint256 constant public RESERVED_TOKENS_OPERATIONAL_EXPENSES = 2e6 * (10 ** decimals);
+  uint256 constant public HARDCAP_TOKENS_PRE_ICO = 5e6 * (10 ** decimals);  //5e27
+  uint256 constant public HARDCAP_TOKENS_ICO = 70e6 * (10 ** decimals); //1e8 * (10 ** DECIMALS)
 
   uint256 public minCap; //in tokens
 
@@ -199,7 +199,7 @@ contract CrowdSale is Pausable, WhiteListable {
     require(msg.value > 0);
     uint256 weiAmount = msg.value;
     weiRaisedICO = weiRaisedICO.add(weiAmount);
-    addInvestmentICO(msg.sender, weiAmount);
+    /* addInvestmentICO(msg.sender, weiAmount); */    //=========================================>  ругается
     uint256 tokenAmount = weiAmount.mul(ICORate);
     token.transferFromICO(msg.sender, tokenAmount);
     TokenSoldICO = TokenSoldICO.add(tokenAmount);
@@ -208,7 +208,7 @@ contract CrowdSale is Pausable, WhiteListable {
   }
 
   function addInvestmentPreICO(address _from, uint256 _value) internal {
-    // if(investorsPreICO[_from] == 0){
+    // if(investorsPreICO[_from] == 0){     //=========================================>  ругается
     //   investorsPreICO.push(_from);
     // }
     investorsPreICO[_from] = investorsPreICO[_from].add(_value);

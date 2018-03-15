@@ -5,14 +5,14 @@ import { assertEqual, assertTrue, timeController } from './utils';
 const SimpleToken = artifacts.require('SimpleToken');
 let accounts; //our local variables
 
-contract('SimpleToken', (wallets) => {
+contract('SimpleToken', function(wallets) {
   const addressICO = wallets[9];
   const addressClient = wallets[1];
   describe('testing on the air...', () => {
 
     beforeEach(async function () {
-          this.token = await SimpleToken.new(addressICO);
-        });
+      this.token = await SimpleToken.new(addressICO);
+    });
 
     // it('deploys a contract', () => {
     //   assert.ok(SimpleToken.options.address);
@@ -21,30 +21,30 @@ contract('SimpleToken', (wallets) => {
     it('should have right name: SimpleToken', async function() {
       const expectedName = 'SimpleToken';
       const tokenName = await this.token.name();
-      assertEqual(expectedName, tokenName);
+      assert.equal(expectedName, tokenName);
     });
 
     it('should have right symbol: ST', async function() {
       const expectedSymbol = 'ST';
       const tokenSymbol = await this.token.symbol();
-      assertEqual(expectedSymbol, tokenSymbol);
+      assert.equal(expectedSymbol, tokenSymbol);
     });
 
     it('should have right decimals: 18', async function() {
       const expectedDec = 18;
       const tokenDec = await this.token.decimals();
-      assertEqual(expectedDec, tokenDec.toNumber());
+      assert.equal(expectedDec, tokenDec.toNumber());
     });
 
     it('should have 100.000.000 tokens', async function() {
       const expectedSupply = 100e6 * (10 ** 18);
       const tokenSupply = await this.token.INITIAL_TOTAL_SUPPLY();
-      assertEqual(expectedSupply, tokenSupply.toNumber());
+      assert.equal(expectedSupply, tokenSupply.toNumber());
     });
 
     it('should have some balance', async function() {
       const balance = await this.token.balanceOf(addressICO);
-      assertEqual(balance.toNumber(), 100e6 * (10 ** 18))
+      assert.equal(balance.toNumber(), 100e6 * (10 ** 18))
 
     });
 
@@ -55,7 +55,7 @@ contract('SimpleToken', (wallets) => {
         from: addressICO
       });
       const balance = await this.token.balanceOf(addressClient);
-      assertEqual(balance.toNumber(), amount);
+      assert.equal(balance.toNumber(), amount);
     });
 
     it('should be reverted', async function() {
@@ -78,7 +78,7 @@ contract('SimpleToken', (wallets) => {
         from: addressAllowed
       });
       const balance = await this.token.balanceOf(addressClient);
-      assertEqual(balance.toNumber(), amount);
+      assert.equal(balance.toNumber(), amount);
     });
 
     it('should transfer from ICO', async function() {
@@ -87,7 +87,7 @@ contract('SimpleToken', (wallets) => {
         from: addressICO
       });
       const balance = await this.token.balanceOf(addressClient);
-      assertEqual(balance.toNumber(), amount);
+      assert.equal(balance.toNumber(), amount);
     });
 
     it('should burn tokens from ICO', async function() {
@@ -97,7 +97,7 @@ contract('SimpleToken', (wallets) => {
         from: addressICO
       });
       const balance = await this.token.balanceOf(addressICO);
-      assertEqual(balance.toNumber(), 0);
+      assert.equal(balance.toNumber(), 0);
     });
 
     it('should burn tokens from wallet', async function() {
@@ -107,7 +107,7 @@ contract('SimpleToken', (wallets) => {
       await this.token.burnFrom(addressICO, amount, {
         from: addressICO
       });
-      assertEqual(balance.sub(amount).toNumber(), balanceDecreased);
+      assert.equal(balance.sub(amount).toNumber(), balanceDecreased);
     });
 
   });

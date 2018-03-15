@@ -49,25 +49,25 @@ contract('CrowdSale', (wallets) => {
     })
 
     it('should have 23.000.000 tokens for founders', async function() {
-      const expectedSupply = 33e5 * (10 ** 18);
+      const expectedSupply = 23e6 * (10 ** 18);
       const saleSupply = await this.sale.RESERVED_TOKENS_FOUNDERS();
       assertEqual(expectedSupply, saleSupply.toNumber());
     });
 
     it('should have 2.000.000 tokens for operational expenses', async function() {
-      const expectedSupply = 2e5 * (10 ** 18);
+      const expectedSupply = 2e6 * (10 ** 18);
       const saleSupply = await this.sale.RESERVED_TOKENS_OPERATIONAL_EXPENSES();
       assertEqual(expectedSupply, saleSupply.toNumber());
     });
 
     it('should have 5.000.000 tokens as hardcap for preICO', async function() {
-      const expectedSupply = 2e6 * (10 ** 18);
+      const expectedSupply = 5e6 * (10 ** 18);
       const saleSupply = await this.sale.HARDCAP_TOKENS_PRE_ICO();
       assertEqual(expectedSupply, saleSupply.toNumber());
     });
 
     it('should have 70.000.000 tokens as hardcap for ICO', async function() {
-      const expectedSupply = 6e6 * (10 ** 18);
+      const expectedSupply = 70e6 * (10 ** 18);
       const saleSupply = await this.sale.HARDCAP_TOKENS_ICO();
       assertEqual(expectedSupply, saleSupply.toNumber());
     });
@@ -94,12 +94,12 @@ contract('CrowdSale', (wallets) => {
     //   // assertEqual(balance.toNumber(), 0);
     // });
 
-    // it('test', async function() {
-    //   const list = await this.list.owner();
-    //   const token = await this.token.owner();
-    //   const sale = this.sale.address;
-    //   assertEqual(list, ownerICO);
-    // });
+    it('test', async function() {
+      const list = await this.list.owner();
+      const token = await this.token.owner();
+      const sale = this.sale.address;
+      assertEqual(list, ownerICO);
+    });
 
 
   });
