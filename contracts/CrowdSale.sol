@@ -45,7 +45,7 @@ contract CrowdSale is Pausable, WhiteListable {
   address private withdrawWallet;
   /* address[] private investorsICO; */
 
-  SimpleToken public token = SimpleToken(this);
+  SimpleToken public token = new SimpleToken(this);
 
   function CrowdSale(uint256 _startPreICO,
                      uint256 _endPreICO,
@@ -72,9 +72,10 @@ contract CrowdSale is Pausable, WhiteListable {
     minCap = _minCap;
     withdrawWallet = _withdrawWallet;
 
-    // token.transferFromICO(_founders, RESERVED_TOKENS_FOUNDERS);
-    // token.transferFromICO(_operational, RESERVED_TOKENS_OPERATIONAL_EXPENSES);
-    // token.transferOwnership(msg.sender);
+    token.transferFromICO(_founders, RESERVED_TOKENS_FOUNDERS);
+    token.transferFromICO(_operational, RESERVED_TOKENS_OPERATIONAL_EXPENSES);
+    token.transferOwnership(msg.sender);
+    whiteList.transferOwnership(msg.sender);
   }
 
   modifier whenICOSaleHasEnded() {
@@ -198,7 +199,7 @@ contract CrowdSale is Pausable, WhiteListable {
     require(msg.value > 0);
     uint256 weiAmount = msg.value;
     weiRaisedICO = weiRaisedICO.add(weiAmount);
-    /* addInvestmentICO(msg.sender, weiAmount); */
+    addInvestmentICO(msg.sender, weiAmount);
     uint256 tokenAmount = weiAmount.mul(ICORate);
     token.transferFromICO(msg.sender, tokenAmount);
     TokenSoldICO = TokenSoldICO.add(tokenAmount);

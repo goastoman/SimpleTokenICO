@@ -15,7 +15,7 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
   string constant public symbol = "ST";
   uint256 constant public decimals = 18;
   address public addressICO;
-  uint256 constant public INITIAL_TOTAL_SUPPLY = 10e6 * (10 ** decimals);
+  uint256 constant public INITIAL_TOTAL_SUPPLY = 100e6 * (10 ** decimals);
 
   modifier onlyICO() {
     require(msg.sender == addressICO);
@@ -63,9 +63,9 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
     // sender's balance is greater than the totalSupply, which *should* be an assertion failure
 
     balances[_from] = balances[_from].sub(_value);
-    totalSupply_ = totalSupply_.sub(_value);
+    totalSupply_ = totalSupply_.sub(_value); //=====================================> нужно ли уменьшать тоталсуплай, если мы сжигаем на другом адресе, а значит на тоталсуплае их нет...
     Burn(_from, _value);
-    Transfer(_from, address(0), _value); 
+    Transfer(_from, address(0), _value); //=========================================>  и берн и трансфер одновременно что дают?
   }
 
 }

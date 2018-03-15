@@ -1,5 +1,7 @@
 pragma solidity ^0.4.19;
 
+
+
 /**
  * @title SafeMath
  * @dev Math operations with safety checks that throw on error
@@ -46,6 +48,8 @@ library SafeMath {
   }
 }
 
+
+
 /**
  * @title ERC20Basic
  * @dev Simpler version of ERC20 interface
@@ -57,6 +61,21 @@ contract ERC20Basic {
   function transfer(address to, uint256 value) public returns (bool);
   event Transfer(address indexed from, address indexed to, uint256 value);
 }
+
+
+
+/**
+ * @title ERC20 interface
+ * @dev see https://github.com/ethereum/EIPs/issues/20
+ */
+contract ERC20 is ERC20Basic {
+  function allowance(address owner, address spender) public view returns (uint256);
+  function transferFrom(address from, address to, uint256 value) public returns (bool);
+  function approve(address spender, uint256 value) public returns (bool);
+  event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
+
 
 /**
  * @title Basic token
@@ -103,41 +122,7 @@ contract BasicToken is ERC20Basic {
 
 }
 
-/**
- * @title ERC20 interface
- * @dev see https://github.com/ethereum/EIPs/issues/20
- */
-contract ERC20 is ERC20Basic {
-  function allowance(address owner, address spender) public view returns (uint256);
-  function transferFrom(address from, address to, uint256 value) public returns (bool);
-  function approve(address spender, uint256 value) public returns (bool);
-  event Approval(address indexed owner, address indexed spender, uint256 value);
-}
 
-/**
- * @title Burnable Token
- * @dev Token that can be irreversibly burned (destroyed).
- */
-contract BurnableToken is BasicToken {
-
-  event Burn(address indexed burner, uint256 value);
-
-  /**
-   * @dev Burns a specific amount of tokens.
-   * @param _value The amount of token to be burned.
-   */
-  function burn(uint256 _value) public {
-    require(_value <= balances[msg.sender]);
-    // no need to require value <= totalSupply, since that would imply the
-    // sender's balance is greater than the totalSupply, which *should* be an assertion failure
-
-    address burner = msg.sender;
-    balances[burner] = balances[burner].sub(_value);
-    totalSupply_ = totalSupply_.sub(_value);
-    Burn(burner, _value);
-    Transfer(burner, address(0), _value);
-  }
-}
 
 /**
  * @title Standard ERC20 token
@@ -234,6 +219,8 @@ contract StandardToken is ERC20, BasicToken {
 
 }
 
+
+
 /**
  * @title Ownable
  * @dev The Ownable contract has an owner address, and provides basic authorization control
@@ -273,6 +260,35 @@ contract Ownable {
   }
 
 }
+
+
+
+/**
+ * @title Burnable Token
+ * @dev Token that can be irreversibly burned (destroyed).
+ */
+contract BurnableToken is BasicToken {
+
+  event Burn(address indexed burner, uint256 value);
+
+  /**
+   * @dev Burns a specific amount of tokens.
+   * @param _value The amount of token to be burned.
+   */
+  function burn(uint256 _value) public {
+    require(_value <= balances[msg.sender]);
+    // no need to require value <= totalSupply, since that would imply the
+    // sender's balance is greater than the totalSupply, which *should* be an assertion failure
+
+    address burner = msg.sender;
+    balances[burner] = balances[burner].sub(_value);
+    totalSupply_ = totalSupply_.sub(_value);
+    Burn(burner, _value);
+    Transfer(burner, address(0), _value);
+  }
+}
+
+
 
 /**
  * @title Pausable
@@ -318,6 +334,8 @@ contract Pausable is Ownable {
   }
 }
 
+
+
 /**
  * @title Mintable token
  * @dev Simple ERC20 Token example, with mintable token creation
@@ -360,6 +378,8 @@ contract MintableToken is StandardToken, Ownable {
     return true;
   }
 }
+
+
 
 contract SimpleToken is Pausable, BurnableToken, StandardToken {
 
@@ -426,6 +446,8 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
 
 }
 
+
+
 contract WhiteList is Ownable {
 /*
   using SafeMath for uint256; */
@@ -454,6 +476,8 @@ contract WhiteList is Ownable {
   }
 }
 
+
+
 contract WhiteListable {
     WhiteList public whiteList;
 
@@ -466,6 +490,8 @@ contract WhiteListable {
         whiteList = new WhiteList();
     }
 }
+
+
 
 contract CrowdSale is Pausable, WhiteListable {
 
@@ -503,7 +529,7 @@ contract CrowdSale is Pausable, WhiteListable {
   address private withdrawWallet;
   /* address[] private investorsICO; */
 
-  SimpleToken public token = SimpleToken(this);
+  SimpleToken public token = new SimpleToken(this);
 
   function CrowdSale(uint256 _startPreICO,
                      uint256 _endPreICO,
@@ -530,9 +556,9 @@ contract CrowdSale is Pausable, WhiteListable {
     minCap = _minCap;
     withdrawWallet = _withdrawWallet;
 
-    // token.transferFromICO(_founders, RESERVED_TOKENS_FOUNDERS);
-    // token.transferFromICO(_operational, RESERVED_TOKENS_OPERATIONAL_EXPENSES);
-    // token.transferOwnership(msg.sender);
+    token.transferFromICO(_founders, RESERVED_TOKENS_FOUNDERS);
+    token.transferFromICO(_operational, RESERVED_TOKENS_OPERATIONAL_EXPENSES);
+    token.transferOwnership(msg.sender);
   }
 
   modifier whenICOSaleHasEnded() {

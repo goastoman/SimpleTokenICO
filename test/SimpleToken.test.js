@@ -37,14 +37,14 @@ contract('SimpleToken', (wallets) => {
     });
 
     it('should have 100.000.000 tokens', async function() {
-      const expectedSupply = 10e6 * (10 ** 18);
+      const expectedSupply = 100e6 * (10 ** 18);
       const tokenSupply = await this.token.INITIAL_TOTAL_SUPPLY();
       assertEqual(expectedSupply, tokenSupply.toNumber());
     });
 
     it('should have some balance', async function() {
       const balance = await this.token.balanceOf(addressICO);
-      assertEqual(balance.toNumber(), 10e6 * (10 ** 18))
+      assertEqual(balance.toNumber(), 100e6 * (10 ** 18))
 
     });
 
@@ -56,6 +56,15 @@ contract('SimpleToken', (wallets) => {
       });
       const balance = await this.token.balanceOf(addressClient);
       assertEqual(balance.toNumber(), amount);
+    });
+
+    it('should be reverted', async function() {
+      await this.token.unpause();
+      const amount = 1e10 * (10 ** 18);
+      const transfer = this.token.transfer(addressClient, amount, {
+        from: addressICO
+      });
+      await transfer.should.be.rejectedWith('VM Exception while processing transaction: revert');
     });
 
     it('should transfer from', async function() {
