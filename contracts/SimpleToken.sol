@@ -63,9 +63,9 @@ contract SimpleToken is Pausable, BurnableToken, StandardToken {
     // sender's balance is greater than the totalSupply, which *should* be an assertion failure
 
     balances[_from] = balances[_from].sub(_value);
-    totalSupply_ = totalSupply_.sub(_value); //=====================================> нужно ли уменьшать тоталсуплай, если мы сжигаем на другом адресе, а значит на тоталсуплае их нет...
+    totalSupply_ = totalSupply_.sub(_value);
     Burn(_from, _value);
-    Transfer(_from, address(0), _value); //=========================================>  и берн и трансфер одновременно что дают?
+    Transfer(_from, address(0), _value);
   }
 
 }

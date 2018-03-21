@@ -43,7 +43,6 @@ contract CrowdSale is Pausable, WhiteListable {
 
   mapping(address => uint256) private investorsPreICO;
   address private withdrawWallet;
-  /* address[] private investorsICO; */
 
   SimpleToken public token = new SimpleToken(this);
 
@@ -145,36 +144,46 @@ contract CrowdSale is Pausable, WhiteListable {
     }
   }
 
-  function getBonusByTime() private returns(uint256) {
-    if(now >= startICO && now <= startICO.add(period1)) {
+  function getBonusByTime() view private returns(uint256) {
+    if(now >= startPreICO && now <= startPreICO.add(period1)) {
       return 15;
     }
-    if(now >= startICO && now <= startICO.add(period2)) {
+    if(now >= startPreICO && now <= startPreICO.add(period2)) {
       return 10;
     }
-    if(now >= startICO && now <= startICO.add(period3)) {
+    if(now >= startPreICO && now <= startPreICO.add(period3)) {
       return 7;
     }
-    if(now >= startICO && now <= startICO.add(period4)) {
+    if(now >= startPreICO && now <= startPreICO.add(period4)) {
       return 5;
     }
     return 0;
   }
 
-  function getBonusByAmount(uint256 _amount) private returns(uint256) {
-    if(_amount >= 200 * 1e18) {   //10e18
-      return _amount.mul(ICORate).mul(110).div(100);
+  function getBonusByAmount(uint256 _amount) pure private returns(uint256) {
+    if(_amount >= 200 * 1e18) {   //200e18
+      return 10;
     }
-    if(_amount >= 50 * 1e18) {   //5e18
-      return _amount.mul(ICORate).mul(107).div(100);
+    if(_amount >= 50 * 1e18) {   //50e18
+      return 7;
     }
-    if(_amount >= 20 * 1e18) {   //5e18
-      return _amount.mul(ICORate).mul(105).div(100);
+    if(_amount >= 20 * 1e18) {   //20e18
+      return 5;
     }
     if(_amount >= 5 * 1e18) {   //5e18
-      return _amount.mul(ICORate).mul(103).div(100);
+      return 3;
     }
-    return _amount.mul(ICORate);
+    return 0;
+  }
+
+  function getBonusByWhiteList(uint256 _type) pure private returns(uint256) {
+    if(_type == 1) {
+      return 25;
+    }
+    if(_type == 2) {
+      return 20;
+    }
+    return 0;
   }
 
   function saleTokenPreICO() public payable whenNotPaused whenWhiteListed(msg.sender) {
@@ -183,9 +192,13 @@ contract CrowdSale is Pausable, WhiteListable {
     uint256 weiAmount = msg.value;
     weiRaisedPreICO = weiRaisedPreICO.add(weiAmount);
     addInvestmentPreICO(msg.sender, weiAmount);
-    uint256 tokenAmountByTime = weiAmount.mul(PreICORate).mul(100 + getBonusByTime()).div(100);
-    uint256 tokenAmountByAmount = getBonusByAmount(weiAmount);
-    uint256 tokenAmount = tokenAmountByTime.add(tokenAmountByAmount);
+    /* uint256 whiteListType = whiteList.list[msg.sender]; */      //<================================================
+    uint256 whiteListType = 3;
+    uint256 tokenAmount = weiAmount.mul(PreICORate);
+    uint256 tokenAmountByTime = tokenAmount.mul(getBonusByTime()).div(100);
+    uint256 tokenAmountByAmount = tokenAmount.mul(getBonusByAmount(weiAmount)).div(100);
+    uint256 tokenAmountByWhiteList = tokenAmount.mul(getBonusByWhiteList(whiteListType)).div(100);
+    tokenAmount = tokenAmount.add(tokenAmountByTime).add(tokenAmountByAmount).add(tokenAmountByWhiteList);
     TokenSoldPreICO = TokenSoldPreICO.add(tokenAmount);
     if(TokenSoldPreICO > HARDCAP_TOKENS_PRE_ICO)
       revert();
@@ -199,7 +212,6 @@ contract CrowdSale is Pausable, WhiteListable {
     require(msg.value > 0);
     uint256 weiAmount = msg.value;
     weiRaisedICO = weiRaisedICO.add(weiAmount);
-    /* addInvestmentICO(msg.sender, weiAmount); */    //=========================================>  ругается
     uint256 tokenAmount = weiAmount.mul(ICORate);
     token.transferFromICO(msg.sender, tokenAmount);
     TokenSoldICO = TokenSoldICO.add(tokenAmount);
@@ -208,9 +220,6 @@ contract CrowdSale is Pausable, WhiteListable {
   }
 
   function addInvestmentPreICO(address _from, uint256 _value) internal {
-    // if(investorsPreICO[_from] == 0){     //=========================================>  ругается
-    //   investorsPreICO.push(_from);
-    // }
     investorsPreICO[_from] = investorsPreICO[_from].add(_value);
   }
 
@@ -234,7 +243,6 @@ contract CrowdSale is Pausable, WhiteListable {
     msg.sender.transfer(weiAmount);
   }
 
-  //referal bonuses (123123123) 2% 3%
   function manualTransferToken(address _to, uint256 _amount) onlyOwner external {
     require(_to != address(0x0));
     tokensRemindingICO = tokensRemindingICO.sub(_amount);
